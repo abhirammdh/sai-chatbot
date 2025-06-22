@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sai - LangChain Gemini Integration</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container">
+<aside class="sidebar">
+<div class="sidebar-header">
+    <div class="logo">
+        <i class="fas fa-brain"></i>
+        <h1>Sai</h1>
+    </div>
+    <button id="toggleSidebar" class="toggle-sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<nav class="sidebar-nav">
+    <ul>
+        <li class="active">
+            <a href="#" data-section="chat"><i class="fas fa-comment-dots"></i> <span>Chat</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="chains"><i class="fas fa-link"></i> <span>Chains</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="tools"><i class="fas fa-tools"></i> <span>Tools</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="memory"><i class="fas fa-memory"></i> <span>Memory</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="about"><i class="fas fa-info-circle"></i> <span>About</span></a>
+        </li>
+        <li>
+            <a href="#" data-section="settings"><i class="fas fa-cog"></i> <span>Settings</span></a>
+        </li>
+    </ul>
+</nav>
+
+<div class="sidebar-footer">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="user-details">
+            <p class="user-name">User</p>
+            <p class="user-role">Developer</p>
+        </div>
+    </div>
+</div>
+</aside>
+<main class="main-content">
+<header class="main-header">
+    <div class="header-title">
+        <h2 id="sectionTitle">Sai - AI Assistant</h2>
+        <p id="sectionDescription">Interact with Google's Gemini model through LangChain</p>
+    </div>
+    <div class="header-actions">
+        <div class="model-selector">
+            <select id="modelSelect">
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                <option value="gemini-pro">Gemini Pro</option>
+            </select>
+        </div>
+        <button id="settingsBtn" class="icon-button" title="Settings">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+</header>
+
+<div class="content-container">
+<section id="chatPage" class="page active">
+    <div class="chat-section">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message system-message">
+                <div class="message-content">
+                    <p>Hello! I'm Sai, your AI assistant powered by Google's Gemini model. How can I help you today?</p>
+                </div>
+                <div class="message-info">
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <textarea id="userInput" placeholder="Ask Sai anything..."></textarea>
+                <div class="input-actions">
+                    <button id="clearChat" class="icon-button" title="Clear chat">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button id="sendMessage" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="suggestion-chips">
+                <button class="suggestion-chip" data-prompt="Explain quantum computing">Quantum Computing</button>
+                <button class="suggestion-chip" data-prompt="Write a Python function to sort a list">Code Example</button>
+                <button class="suggestion-chip" data-prompt="Tell me about LangChain">About LangChain</button>
+                <button class="suggestion-chip" data-prompt="What can you help me with?">Your Capabilities</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="chainsPage" class="page">
+    <div class="page-content">
+        <div class="page-header">
+            <h2>Chain Operations</h2>
+            <p>Create and execute sequential AI processing workflows</p>
+        </div>
+        
+        <div class="chains-container">
+            <div class="chain-builder-card">
+                <h3><i class="fas fa-plus-circle"></i> Create New Chain</h3>
+                <div class="chain-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <label for="step1">Analysis Step</label>
+                            <input type="text" id="step1" placeholder="Analyze the text for sentiment and key themes">
+                        </div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <label for="step2">Transform Step</label>
+                            <input type="text" id="step2" placeholder="Rewrite in a professional and engaging tone">
+                        </div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <label for="step3">Output Step</label>
+                            <input type="text" id="step3" placeholder="Create a concise summary with key points">
+                        </div>
+                    </div>
+                </div>
+                <div class="chain-actions">
+                    <button id="runChain" class="primary-button">
+                        <i class="fas fa-play"></i> Execute Chain
+                    </button>
+                    <button id="saveChain" class="secondary-button">
+                        <i class="fas fa-save"></i> Save Template
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chain-history">
+                <h3><i class="fas fa-history"></i> Recent Chains</h3>
+                <div id="chainHistory" class="chain-list">
+                    <div class="empty-state">
+                        <i class="fas fa-link"></i>
+                        <p>No chains executed yet</p>
+                        <small>Create and run your first chain to see results here</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="toolsPage" class="page">
+<div class="page-content">
+<div class="page-header">
+<h2>AI Tools</h2>
+<p>Access integrated tools and utilities for enhanced productivity</p>
+</div>
+
+<div class="tools-grid">
+<div class="tool-card-large">
+    <div class="tool-header">
+        <div class="tool-icon">
+            <i class="fas fa-calculator"></i>
+        </div>
+        <div class="tool-info">
+            <h3>Calculator</h3>
+            <p>Perform mathematical calculations and expressions</p>
+        </div>
+    </div>
+    <div class="tool-content">
+        <input type="text" id="calcInput" placeholder="Enter mathematical expression (e.g., 15 * 7 + 23)">
+        <button class="tool-button" data-tool="calculator">
+            <i class="fas fa-equals"></i> Calculate
+        </button>
+    </div>
+    <div class="tool-result" id="calcResult"></div>
+</div>
+
+<div class="tool-card-large">
+    <div class="tool-header">
+        <div class="tool-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="tool-info">
+            <h3>Date & Time</h3>
+            <p>Get current date, time, and timezone information</p>
+        </div>
+    </div>
+    <div class="tool-content">
+        <button class="tool-button" data-tool="datetime">
+            <i class="fas fa-clock"></i> Get Current Time
+        </button>
+    </div>
+    <div class="tool-result" id="timeResult"></div>
+</div>
+
+<div class="tool-card-large">
+    <div class="tool-header">
+        <div class="tool-icon">
+            <i class="fas fa-random"></i>
+        </div>
+        <div class="tool-info">
+            <h3>Random Generator</h3>
+            <p>Generate random numbers, strings, or make choices</p>
+        </div>
+    </div>
+    <div class="tool-content">
+        <div class="random-controls">
+            <input type="number" id="randomMin" placeholder="Min" value="1">
+            <input type="number" id="randomMax" placeholder="Max" value="100">
+        </div>
+        <button class="tool-button" data-tool="random">
+            <i class="fas fa-dice"></i> Generate Random
+        </button>
+    </div>
+    <div class="tool-result" id="randomResult"></div>
+</div>
+</div>
+</div>
+</section>
+
+
+<section id="memoryPage" class="page">
+<div class="page-content">
+<div class="page-header">
+<h2>Memory Management</h2>
+<p>Manage conversation history and context settings</p>
+</div>
+
+<div class="memory-container">
+<div class="memory-settings">
+    <h3><i class="fas fa-cog"></i> Memory Settings</h3>
+    <div class="setting-item">
+        <label class="checkbox-label">
+            <input type="checkbox" id="enableMemory" checked>
+            <span>Enable conversation memory</span>
+        </label>
+        <p class="setting-description">Allow Sai to remember previous conversations for context</p>
+    </div>
+    <div class="setting-item">
+        <label for="memoryWindow">Memory Window Size</label>
+        <select id="memoryWindow">
+            <option value="5">Last 5 messages</option>
+            <option value="10" selected>Last 10 messages</option>
+            <option value="20">Last 20 messages</option>
+            <option value="50">Last 50 messages</option>
+        </select>
+        <p class="setting-description">Number of recent messages to keep in memory</p>
+    </div>
+    <div class="setting-actions">
+        <button id="clearMemory" class="secondary-button">
+            <i class="fas fa-trash"></i> Clear All Memory
+        </button>
+        <button id="exportMemory" class="primary-button">
+            <i class="fas fa-download"></i> Export History
+        </button>
+    </div>
+</div>
+
+<div class="memory-display">
+    <h3><i class="fas fa-history"></i> Conversation History</h3>
+    <div id="memoryContent" class="memory-content">
+        <div class="empty-state">
+            <i class="fas fa-comments"></i>
+            <p>No conversation history</p>
+            <small>Start chatting to see your conversation history here</small>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Reports Page -->
+<section id="reportsPage" class="page">
+<div class="page-content">
+<div class="page-header">
+<h2>Analytics & Reports</h2>
+<p>Comprehensive usage statistics and performance insights</p>
+</div>
+
+<div class="reports-container">
+<div class="stats-overview">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" id="totalRequests">0</div>
+            <div class="stat-label">Total Requests</div>
+            <div class="stat-change">+0% from last week</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" id="avgResponseTime">0ms</div>
+            <div class="stat-label">Avg Response Time</div>
+            <div class="stat-change">-5% faster</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-coins"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" id="tokensUsed">0</div>
+            <div class="stat-label">Tokens Used</div>
+            <div class="stat-change">Total consumed</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" id="successRate">100%</div>
+            <div class="stat-label">S
+                ccess Rate</div>
+            <div class="stat-change">Excellent</div>
+        </div>
+    </div>
+</div>
+
+<div class="charts-section">
+    <div class="chart-card">
+        <h3><i class="fas fa-chart-line"></i> Usage Trends</h3>
+        <div class="chart-placeholder">
+            <div id="usageChart" style="width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+    
+    <div class="chart-card">
+        <h3><i class="fas fa-chart-pie"></i> Tool Usage Distribution</h3>
+        <div class="chart-placeholder">
+            <div id="toolsChart" style="width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="reports-actions">
+    <button id="generateReport" class="primary-button">
+        <i class="fas fa-file-pdf"></i> Generate PDF Report
+    </button>
+    <button id="exportData" class="secondary-button">
+        <i class="fas fa-download"></i> Export Raw Data
+    </button>
+</div>
+</div>
+</div>
+</section>
+
+
+<section id="aboutPage" class="page">
+<div class="page-content">
+<div class="about-container">
+<div class="founder-section">
+    <div class="founder-card">
+        <div class="founder-image">
+            <img src="https://i.ibb.co/M59pYPm8/my-profile-img.jpg" alt="Devulapalli Abhiram" id="founderImage">
+            <div class="founder-badge">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+        </div>
+        <div class="founder-info">
+            <h2>Devulapalli Abhiram</h2>
+            <p class="founder-title">Founder & Developer</p>
+            <p class="founder-institution">Sri Sathya Sai Institute of Higher Learning</p>
+            
+            <div class="founder-description">
+                <p>Passionate about artificial intelligence and machine learning, Abhiram is dedicated to creating innovative solutions that bridge the gap between complex AI technologies and practical applications.</p>
+                
+                <p>As a student at the prestigious Sri Sathya Sai Institute of Higher Learning, he combines academic excellence with hands-on development experience to build cutting-edge AI tools like Sai.</p>
+            </div>
+
+            <div class="founder-achievements">
+                <h3>Key Achievements</h3>
+                <ul>
+                    <li><i class="fas fa-robot"></i> Developed Sai AI Assistant with LangChain integration</li>
+                    <li><i class="fas fa-code"></i> Expert in Python, JavaScript, and AI frameworks</li>
+                    <li><i class="fas fa-graduation-cap"></i> Student at Sri Sathya Sai Institute of Higher Learning</li>
+                    <li><i class="fas fa-lightbulb"></i> Focused on practical AI applications and user experience</li>
+                </ul>
+            </div>
+
+            <div class="founder-contact">
+                <h3>Connect</h3>
+                <div class="contact-links">
+                    <a href="#" class="contact-link">
+                        <i class="fab fa-linkedin"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                    <a href="#" class="contact-link">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="#" class="contact-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="project-section">
+    <h2>About Sai AI Assistant</h2>
+    <div class="project-grid">
+        <div class="project-card">
+            <div class="project-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3>Intelligent Conversations</h3>
+            <p>Powered by Google's Gemini model, Sai provides intelligent, context-aware responses to help you with various tasks and questions.</p>
+        </div>
+        
+        <div class="project-card">
+            <div class="project-icon">
+                <i class="fas fa-link"></i>
+            </div>
+            <h3>LangChain Integration</h3>
+            <p>Built with LangChain framework for advanced AI workflows, memory management, and tool integration capabilities.</p>
+        </div>
+        
+        <div class="project-card">
+            <div class="project-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h3>Powerful Tools</h3>
+            <p>Integrated tools for calculations, date/time operations, random generation, and chain-based processing workflows.</p>
+        </div>
+        
+        <div class="project-card">
+            <div class="project-icon">
+                <i class="fas fa-memory"></i>
+            </div>
+            <h3>Smart Memory</h3>
+            <p>Advanced conversation memory system that maintains context across interactions for more meaningful conversations.</p>
+        </div>
+    </div>
+</div>
+
+<div class="vision-section">
+    <h2>Vision & Mission</h2>
+    <div class="vision-content">
+        <div class="vision-card">
+            <h3><i class="fas fa-eye"></i> Vision</h3>
+            <p>To democratize access to advanced AI technologies by creating intuitive, powerful tools that anyone can use to enhance their productivity and creativity.</p>
+        </div>
+        <div class="mission-card">
+            <h3><i class="fas fa-target"></i> Mission</h3>
+            <p>Building bridges between cutting-edge AI research and practical applications, making artificial intelligence accessible, ethical, and beneficial for everyone.</p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+
+<section id="settingsPage" class="page">
+<div class="page-content">
+<div class="page-header">
+<h2>Settings</h2>
+<p>Configure your AI assistant preferences and API settings</p>
+</div>
+
+<div class="settings-container">
+<div class="settings-section">
+    <h3><i class="fas fa-key"></i> API Configuration</h3>
+    <div class="form-group">
+        <label for="apiKey">Google Gemini API Key</label>
+        <div class="input-with-icon">
+            <input type="password" id="apiKey" value="AIzaSyD1PkDbJHqqhr8kTNd6qWeKgeWUiaHjlkI">
+            <button id="toggleKey" class="icon-button">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <p class="form-help">Your API key is stored locally and never shared</p>
+    </div>
+    <div class="form-group">
+        <label for="temperature">Response Creativity (Temperature)</label>
+        <div class="range-with-value">
+            <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+            <span id="tempValue">0.7</span>
+        </div>
+        <p class="form-help">Higher values make responses more creative, lower values more focused</p>
+    </div>
+    <div class="form-group">
+        <label for="maxTokens">Maximum Response Length</label>
+        <input type="number" id="maxTokens" value="1000" min="1" max="8192">
+        <p class="form-help">Maximum number of tokens in AI responses</p>
+    </div>
+</div>
+                        
+<div class="settings-section">
+<h3><i class="fas fa-palette"></i> Interface</h3>
+<div class="form-group">
+    <label class="checkbox-label">
+        <input type="checkbox" id="darkMode">
+        <span>Dark Mode</span>
+    </label>
+    <p class="form-help">Switch to dark theme for better viewing in low light</p>
+</div>
+<div class="form-group">
+    <label for="fontSize">Font Size</label>
+    <select id="fontSize">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+    </select>
+    <p class="form-help">Adjust text size for better readability</p>
+</div>
+</div>
+
+<div class="settings-section">
+<h3><i class="fas fa-language"></i> Language</h3>
+<div class="form-group">
+    <label for="languageSelect">Interface Language</label>
+    <select id="languageSelect">
+        <option value="english">English</option>
+        <option value="hindi">हिंदी (Hindi)</option>
+        <option value="telugu">తెలుగు (Telugu)</option>
+    </select>
+    <p class="form-help">Choose your preferred language for the interface</p>
+</div>
+</div>
+
+<div class="settings-section">
+<h3><i class="fas fa-bell"></i> Notifications</h3>
+<div class="form-group">
+    <label class="checkbox-label">
+        <input type="checkbox" id="enableNotifications" checked>
+        <span>Enable Notifications</span>
+    </label>
+    <p class="form-help">Get notified about important events and updates</p>
+</div>
+<div class="form-group">
+    <label class="checkbox-label">
+        <input type="checkbox" id="soundEffects" checked>
+        <span>Sound Effects</span>
+    </label>
+    <p class="form-help">Play sounds for message notifications</p>
+</div>
+</div>
+
+<div class="settings-actions">
+<button id="saveSettings" class="primary-button">
+    <i class="fas fa-save"></i> Save Settings
+</button>
+<button id="resetSettings" class="secondary-button">
+    <i class="fas fa-undo"></i> Reset to Defaults
+</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loader">
+        <div class="loader-circle"></div>
+        <div class="loader-text">Processing...</div>
+    </div>
+</div>
+
+<div id="successToast" class="toast success-toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="successMessage">Settings saved successfully!</span>
+</div>
+
+    <div id="errorToast" class="toast error-toast">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="errorMessage">An error occurred!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
